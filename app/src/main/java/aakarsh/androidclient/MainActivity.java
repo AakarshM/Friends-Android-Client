@@ -10,22 +10,24 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button login, signup;
+    Button login, signup, resetB;
     EditText email, pass, displayField;
     ProgressBar bar;
     String emailID, passID, name;
-    String url = "http://80b15a94.ngrok.io"; //base url
+    String url = "https://65d8f376.ngrok.io"; //base url
     public static String authToken;
     public static String emailOfUser;
 
@@ -38,18 +40,48 @@ public class MainActivity extends AppCompatActivity {
         login = (Button) findViewById(R.id.login);
         signup = (Button)findViewById(R.id.signup);
         login.setOnClickListener(loginListener);
+        resetB = (Button) findViewById(R.id.resetB);
         displayField = (EditText)findViewById(R.id.displayField);
         signup.setOnClickListener(signupListener);
         bar = (ProgressBar) findViewById(R.id.bar);
         bar.setVisibility(View.INVISIBLE);
+        resetB.setOnClickListener(resetListener);
     }
 
     public View.OnClickListener loginListener = new View.OnClickListener() {
         public void onClick (View view){
 
+            resetF(email.getText().toString());
+
+
+        }};
+
+    public void resetF(String emailGiven){
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+
+// Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url + "/resetrequest?email=" + emailGiven,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    public View.OnClickListener resetListener = new View.OnClickListener() {
+        public void onClick (View view){
+
             logIn(email.getText().toString(), pass.getText().toString());
 
         }};
+
     public View.OnClickListener signupListener = new View.OnClickListener() {
         public void onClick (View view){
             emailID = email.getText().toString();
